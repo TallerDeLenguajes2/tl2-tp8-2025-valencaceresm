@@ -1,0 +1,62 @@
+@model TP8_MVC.Models.Presupuesto
+
+@{
+    ViewData["Title"] = "Detalle del Presupuesto";
+}
+
+<h1>Detalle del Presupuesto</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">ID Presupuesto</dt>
+        <dd class="col-sm-9">@Model.IdPresupuesto</dd>
+        
+        <dt class="col-sm-3">Nombre Destinatario</dt>
+        <dd class="col-sm-9">@Model.NombreDestinatario</dd>
+    </dl>
+</div>
+
+<h3>Productos Asociados</h3>
+
+@if (Model.Productos.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var producto in Model.Productos)
+    {
+            <tr>
+                <td>@producto.IdProducto</td>
+                <td>@producto.Descripcion</td>
+                <td>@producto.Cantidad</td>
+                <td>@producto.Precio.ToString("C")</td>
+                <td>@((producto.Precio * producto.Cantidad).ToString("C"))</td>
+            </tr>
+    }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="text-end"><strong>Monto Total:</strong></td>
+                <td><strong>@Model.MontoTotal().ToString("C")</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+}
+else
+{
+    <p class="alert alert-info">No hay productos asociados a este presupuesto.</p>
+}
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.IdPresupuesto" class="btn btn-warning">Editar</a>
+    <a asp-action="Index" class="btn btn-secondary">Volver al Listado</a>
+</div>
