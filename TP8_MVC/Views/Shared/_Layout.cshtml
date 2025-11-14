@@ -32,6 +32,25 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <ul class="navbar-nav">
+                        @if (Context.Session.GetString("IsAuthenticated") == "true")
+                        {
+                            <li class="nav-item me-2">
+                                <span class="navbar-text">Hola, @Context.Session.GetString("UserNombre") (@Context.Session.GetString("Rol"))</span>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-link nav-link">Salir</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Index">Login</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>

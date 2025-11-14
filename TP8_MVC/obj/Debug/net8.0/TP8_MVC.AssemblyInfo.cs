@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TP8_MVC")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2e3c61791f9711cb8ce1e561dac2e6b2094b00d9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dd597a90a3d40e58c0a98920a2d514dc88f40a01")]
 [assembly: System.Reflection.AssemblyProductAttribute("TP8_MVC")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TP8_MVC")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
