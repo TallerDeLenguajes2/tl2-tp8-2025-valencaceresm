@@ -1,10 +1,11 @@
 using Microsoft.Data.Sqlite;
+using TP8_MVC.Interfaces;
 using TP8_MVC.Models;
 
-namespace TP8_MVC.Repositories
+namespace TP8_MVC.Repositories;
+
+public class ProductoRepository : IProductoRepository
 {
-    public class ProductoRepository
-    {
         private readonly string _connectionString;
 
         public ProductoRepository()

@@ -1,10 +1,11 @@
 using Microsoft.Data.Sqlite;
+using TP8_MVC.Interfaces;
 using TP8_MVC.Models;
 
-namespace TP8_MVC.Repositories
+namespace TP8_MVC.Repositories;
+
+public class PresupuestoRepository : IPresupuestoRepository
 {
-    public class PresupuestoRepository
-    {
         private readonly string _connectionString;
 
         public PresupuestoRepository()
