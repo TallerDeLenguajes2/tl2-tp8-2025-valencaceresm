@@ -1,25 +1,33 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using TP8_MVC.Interfaces;
 using TP8_MVC.Models;
-using TP8_MVC.Repositories;
 using TP8_MVC.ViewModels;
 
 namespace TP8_MVC.Controllers
 {
     public class PresupuestosController : Controller
     {
-        private readonly PresupuestoRepository _presupuestoRepository;
-        private readonly ProductoRepository _productoRepository;
+        private readonly IPresupuestoRepository _presupuestoRepository;
+        private readonly IProductoRepository _productoRepository;
+        private readonly IAuthenticationService _authenticationService;
 
-        public PresupuestosController()
+        public PresupuestosController(IPresupuestoRepository presupuestoRepository, IProductoRepository productoRepository, IAuthenticationService authenticationService)
         {
-            _presupuestoRepository = new PresupuestoRepository();
-            _productoRepository = new ProductoRepository();
+            _presupuestoRepository = presupuestoRepository;
+            _productoRepository = productoRepository;
+            _authenticationService = authenticationService;
         }
 
         // GET: Presupuestos
         public IActionResult Index()
         {
+            if (!_authenticationService.IsAuthenticated())
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            // Administrador y Cliente pueden ver el listado
             var presupuestos = _presupuestoRepository.GetAll();
             return View(presupuestos);
         }
@@ -27,6 +35,11 @@ namespace TP8_MVC.Controllers
         // GET: Presupuestos/Details/5
         public IActionResult Details(int id)
         {
+            if (!_authenticationService.IsAuthenticated())
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             var presupuesto = _presupuestoRepository.GetById(id);
             if (presupuesto == null)
             {
@@ -38,6 +51,16 @@ namespace TP8_MVC.Controllers
         // GET: Presupuestos/Create
         public IActionResult Create()
         {
+            if (!_authenticationService.IsAuthenticated())
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            if (!_authenticationService.HasAccessLevel("Administrador"))
+            {
+                return RedirectToAction("AccesoDenegado", "Home");
+            }
+
             return View(new PresupuestoViewModel());
         }
 
@@ -46,6 +69,16 @@ namespace TP8_MVC.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(PresupuestoViewModel presupuestoVM)
         {
+            if (!_authenticationService.IsAuthenticated())
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            if (!_authenticationService.HasAccessLevel("Administrador"))
+            {
+                return RedirectToAction("AccesoDenegado", "Home");
+            }
+
             // 1. Chequeo de seguridad del servidor
             if (!ModelState.IsValid)
             {
@@ -66,6 +99,16 @@ namespace TP8_MVC.Controllers
         // GET: Presupuestos/Edit/5
         public IActionResult Edit(int id)
         {
+            if (!_authenticationService.IsAuthenticated())
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            if (!_authenticationService.HasAccessLevel("Administrador"))
+            {
+                return RedirectToAction("AccesoDenegado", "Home");
+            }
+
             var presupuesto = _presupuestoRepository.GetById(id);
             if (presupuesto == null)
             {
@@ -86,6 +129,16 @@ namespace TP8_MVC.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, PresupuestoViewModel presupuestoVM)
         {
+            if (!_authenticationService.IsAuthenticated())
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            if (!_authenticationService.HasAccessLevel("Administrador"))
+            {
+                return RedirectToAction("AccesoDenegado", "Home");
+            }
+
             if (id != presupuestoVM.IdPresupuesto)
             {
                 return NotFound();
@@ -109,6 +162,16 @@ namespace TP8_MVC.Controllers
         // GET: Presupuestos/Delete/5
         public IActionResult Delete(int id)
         {
+            if (!_authenticationService.IsAuthenticated())
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            if (!_authenticationService.HasAccessLevel("Administrador"))
+            {
+                return RedirectToAction("AccesoDenegado", "Home");
+            }
+
             var presupuesto = _presupuestoRepository.GetById(id);
             if (presupuesto == null)
             {
@@ -122,6 +185,16 @@ namespace TP8_MVC.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
+            if (!_authenticationService.IsAuthenticated())
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            if (!_authenticationService.HasAccessLevel("Administrador"))
+            {
+                return RedirectToAction("AccesoDenegado", "Home");
+            }
+
             _presupuestoRepository.Delete(id);
             return RedirectToAction(nameof(Index));
         }
@@ -129,6 +202,16 @@ namespace TP8_MVC.Controllers
         // GET: Presupuestos/AgregarProducto/5
         public IActionResult AgregarProducto(int id)
         {
+            if (!_authenticationService.IsAuthenticated())
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            if (!_authenticationService.HasAccessLevel("Administrador"))
+            {
+                return RedirectToAction("AccesoDenegado", "Home");
+            }
+
             var presupuesto = _presupuestoRepository.GetById(id);
             if (presupuesto == null)
             {
@@ -150,6 +233,16 @@ namespace TP8_MVC.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AgregarProducto(AgregarProductoViewModel model)
         {
+            if (!_authenticationService.IsAuthenticated())
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            if (!_authenticationService.HasAccessLevel("Administrador"))
+            {
+                return RedirectToAction("AccesoDenegado", "Home");
+            }
+
             // 1. Chequeo de seguridad por la Cantidad y selección
             if (!ModelState.IsValid)
             {
