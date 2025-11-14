@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TP8_MVC.Models;
 using TP8_MVC.Repositories;
+using TP8_MVC.ViewModels;
 
 namespace TP8_MVC.Controllers
 {
@@ -23,20 +24,32 @@ namespace TP8_MVC.Controllers
         // GET: Productos/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new ProductoViewModel());
         }
 
         // POST: Productos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Producto producto)
+        public IActionResult Create(ProductoViewModel productoVM)
         {
-            if (ModelState.IsValid)
+            // 1. Chequeo de seguridad del servidor
+            if (!ModelState.IsValid)
             {
-                _productoRepository.Create(producto);
-                return RedirectToAction(nameof(Index));
+                // Si falla: devolvemos el ViewModel con los datos y errores a la Vista
+                return View(productoVM);
             }
-            return View(producto);
+
+            // 2. Si es válido: Mapeo manual de VM a Modelo de Dominio
+            var nuevoProducto = new Producto
+            {
+                Descripcion = productoVM.Descripcion ?? string.Empty,
+                Precio = productoVM.Precio,
+                Cantidad = 0 // La cantidad se maneja al agregar productos a presupuestos
+            };
+
+            // 3. Llamada al repositorio
+            _productoRepository.Create(nuevoProducto);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Productos/Edit/5
@@ -47,25 +60,46 @@ namespace TP8_MVC.Controllers
             {
                 return NotFound();
             }
-            return View(producto);
+
+            // Mapeo de Modelo de Dominio a ViewModel
+            var productoVM = new ProductoViewModel
+            {
+                IdProducto = producto.IdProducto,
+                Descripcion = producto.Descripcion,
+                Precio = producto.Precio
+            };
+
+            return View(productoVM);
         }
 
         // POST: Productos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Producto producto)
+        public IActionResult Edit(int id, ProductoViewModel productoVM)
         {
-            if (id != producto.IdProducto)
+            if (id != productoVM.IdProducto)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            // 1. Chequeo de seguridad del servidor
+            if (!ModelState.IsValid)
             {
-                _productoRepository.Update(producto);
-                return RedirectToAction(nameof(Index));
+                return View(productoVM);
             }
-            return View(producto);
+
+            // 2. Mapeo manual VM -> Modelo de Dominio
+            var productoEditado = new Producto
+            {
+                IdProducto = productoVM.IdProducto,
+                Descripcion = productoVM.Descripcion ?? string.Empty,
+                Precio = productoVM.Precio,
+                Cantidad = 0
+            };
+
+            // 3. Llamada al repositorio
+            _productoRepository.Update(productoEditado);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Productos/Delete/5
